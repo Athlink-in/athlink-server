@@ -8,8 +8,13 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import org.litote.kmongo.KMongo
 
 fun main() {
+    val client = KMongo.createClient()
+    val database = client.getDatabase("shoppingList")
+    val collection = database.getCollection<ShoppingListItem>()
+
     infix fun String.ate(a: String) {
         println("${this} just ate ${a}")
     }
@@ -29,9 +34,10 @@ fun main() {
             }
         }
         routing {
-            get("/") {
-                println("GET Request")
-                call.respond(mapOf("user" to "test user"))
+            route("/user") {
+                get {
+
+                }
             }
         }
     }.start(wait = true)
