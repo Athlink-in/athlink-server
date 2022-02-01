@@ -1,23 +1,24 @@
-package com.example
+package com.athlink
 
+import com.athlink.model.Profile
+import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.KMongo
+import org.litote.kmongo.*
 
 fun main() {
-    val client = KMongo.createClient()
-    val database = client.getDatabase("shoppingList")
-    val collection = database.getCollection<ShoppingListItem>()
+    val client = KMongo.createClient(System.getenv("MONGO_URI"))
+    val database = client.getDatabase("athlink")
+    val profiles = database.getCollection<Profile>()
 
-    infix fun String.ate(a: String) {
-        println("${this} just ate ${a}")
-    }
     embeddedServer(Netty, port = 8080) {
         install(CORS) {
             method(HttpMethod.Options)
@@ -35,8 +36,10 @@ fun main() {
         }
         routing {
             route("/user") {
-                get {
-
+                get("/{email}") {
+                    val email = call.parameters["email"]
+                    val filter = Filters.eq("email", email)
+                    call.respond(profiles.find(filter).toList())
                 }
             }
         }
