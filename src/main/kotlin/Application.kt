@@ -41,6 +41,12 @@ fun main() {
                     val filter = Filters.eq("email", email)
                     call.respond(profiles.find(filter).toList())
                 }
+                post {
+                    val newProfile = call.receive<Profile>()
+                    newProfile.memberSince = System.currentTimeMillis().toString()
+                    val id = profiles.insertOne(newProfile)
+                    call.respond(id)
+                }
             }
         }
     }.start(wait = true)
