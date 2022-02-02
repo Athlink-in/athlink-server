@@ -1,11 +1,10 @@
 plugins {
-    id 'java'
+    id 'application'
     id 'org.jetbrains.kotlin.jvm' version '1.5.10'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
-    id 'application'
 }
 
-group 'org.example'
+group 'com.athlink'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -16,9 +15,9 @@ tasks.create("stage") {
     dependsOn("installDist")
 }
 
-application {
-    mainClass = 'com.example.ApplicationKt'
-}
+apply plugin: "application"
+
+mainClassName = "com.athlink.ApplicationKt"
 
 dependencies {
     implementation "io.ktor:ktor-server-core:1.6.7"
