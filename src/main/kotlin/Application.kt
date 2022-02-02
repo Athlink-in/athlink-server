@@ -19,7 +19,7 @@ fun main() {
     val database = client.getDatabase("athlink")
     val profiles = database.getCollection<Profile>()
 
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
         install(CORS) {
             method(HttpMethod.Options)
             method(HttpMethod.Put)
