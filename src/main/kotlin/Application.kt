@@ -35,6 +35,11 @@ fun main() {
             }
         }
         routing {
+            route("/") {
+                get {
+                    call.respond("Athlink says hello!")
+                }
+            }
             route("/user") {
                 get("/{email}") {
                     val email = call.parameters["email"]
