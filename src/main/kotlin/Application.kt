@@ -1,5 +1,6 @@
 package com.athlink
 
+import com.athlink.api.userManagementRoutes
 import com.athlink.model.Profile
 import com.mongodb.client.model.Filters
 import io.ktor.application.*
@@ -40,19 +41,7 @@ fun main() {
                     call.respond("Athlink says hello!")
                 }
             }
-            route("/user") {
-                get("/{email}") {
-                    val email = call.parameters["email"]
-                    val filter = Filters.eq("email", email)
-                    call.respond(profiles.find(filter).toList())
-                }
-                post {
-                    val newProfile = call.receive<Profile>()
-                    newProfile.memberSince = System.currentTimeMillis().toString()
-                    val id = profiles.insertOne(newProfile)
-                    call.respond(id)
-                }
-            }
+            userManagementRoutes(profiles)
         }
     }.start(wait = true)
 }
