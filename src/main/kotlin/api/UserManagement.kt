@@ -8,7 +8,9 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.bson.BsonTimestamp
 import org.bson.types.ObjectId
+import org.litote.kmongo.MongoOperator
 
 fun Application.userManagementRoutes(profiles: MongoCollection<Profile>){
     routing {
@@ -20,7 +22,7 @@ fun Application.userManagementRoutes(profiles: MongoCollection<Profile>){
             }
             post {
                 val newProfile = call.receive<Profile>()
-                newProfile.memberSince = System.currentTimeMillis().toString()
+                newProfile.memberSince = BsonTimestamp(System.currentTimeMillis())
                 val existingProfiles = profiles.find(Filters.eq("email", newProfile.email)).toList()
                 if(existingProfiles.isEmpty()) {
                     profiles.insertOne(newProfile)
