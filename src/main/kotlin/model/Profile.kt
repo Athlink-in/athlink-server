@@ -10,6 +10,11 @@ import org.litote.kmongo.newId
 data class Profile(
     var firstName: String?,
     var lastName: String?,
+    val height: Int?,
+    val age: Int?,
+    val school: String?,
+    val weight: Int?,
+    val gradYear: Int?,
     @Serializable(with = BSONTimestampSerializer::class) var memberSince: BsonTimestamp?,
     val email: String?,
     var _id: Id<Profile> = newId(),

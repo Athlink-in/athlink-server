@@ -9,8 +9,6 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.bson.BsonTimestamp
-import org.bson.types.ObjectId
-import org.litote.kmongo.MongoOperator
 
 fun Application.userManagementRoutes(profiles: MongoCollection<Profile>){
     routing {
