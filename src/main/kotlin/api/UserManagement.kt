@@ -24,14 +24,13 @@ fun Application.userManagementRoutes(profiles: MongoCollection<Profile>){
                 val existingProfiles = profiles.find(Filters.eq("email", newProfile.email)).toList()
                 if(existingProfiles.isEmpty()) {
                     profiles.insertOne(newProfile)
-                    call.respond(HttpStatusCode.OK, newProfile._id.toString())
+                    call.respond(HttpStatusCode.OK, newProfile.email.toString())
 
                 } else {
                     val existingProfile = existingProfiles.first()
                     newProfile.memberSince = existingProfile.memberSince
-                    newProfile._id = existingProfile._id
-                    profiles.replaceOne(Filters.eq("_id", newProfile._id), newProfile)
-                    call.respond(HttpStatusCode.OK, newProfile._id.toString())
+                    profiles.replaceOne(Filters.eq("email", newProfile.email), newProfile)
+                    call.respond(HttpStatusCode.OK, newProfile.email.toString())
                 }
             }
         }
