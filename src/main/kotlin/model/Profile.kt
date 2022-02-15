@@ -17,10 +17,11 @@ data class JSProfile(
     var sex: String?,
     var email: String?,
     var description: String?,
-    var memberSince: String?
+    var photoURL: String?,
+    var memberSince: String?,
 ) {
     fun toMongoProfile() = MongoProfile(
-        firstname, lastname, height, age, school, weight, gradYear, sex, email, description, BsonTimestamp(memberSince?.toLong() ?: getTimeMillis())
+        firstname, lastname, height, age, school, weight, gradYear, sex, email, description, photoURL, BsonTimestamp(memberSince?.toLong() ?: getTimeMillis())
     )
 }
 
@@ -37,9 +38,10 @@ data class MongoProfile(
     var sex: String?,
     var email: String?,
     var description: String?,
+    var photoURL: String?,
     @Serializable(with = BSONTimestampSerializer::class) var memberSince: BsonTimestamp? = BsonTimestamp(getTimeMillis()),
 ) {
     fun toJSProfile() = JSProfile(
-        firstname, lastname, height, age, school, weight, gradYear, sex, email, description, memberSince?.value.toString()
+        firstname, lastname, height, age, school, weight, gradYear, sex, email, description, photoURL, memberSince?.value.toString()
     )
 }
