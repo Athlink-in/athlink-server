@@ -1,7 +1,7 @@
 package com.athlink
 
 import com.athlink.api.userManagementRoutes
-import com.athlink.model.Profile
+import com.athlink.model.MongoProfile
 import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.features.*
@@ -18,7 +18,7 @@ import org.litote.kmongo.*
 fun main() {
     val client = KMongo.createClient(System.getenv("MONGO_URI"))
     val database = client.getDatabase("athlink")
-    val profiles = database.getCollection<Profile>()
+    val profiles = database.getCollection<MongoProfile>()
 
     embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
         install(CORS) {
