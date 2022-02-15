@@ -2,6 +2,7 @@ package com.athlink.api
 
 import com.athlink.model.JSProfile
 import com.athlink.model.MongoProfile
+import com.athlink.model.Posts
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
 import io.ktor.application.*
@@ -9,9 +10,11 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.utils.io.*
 import org.bson.BsonTimestamp
 
-fun Application.userManagementRoutes(profiles: MongoCollection<MongoProfile>){
+
+fun Application.userManagementRoutes(profiles: MongoCollection<MongoProfile>, posts: MongoCollection<Posts>){
     routing {
         route("/user") {
             get("/{email}") {
@@ -35,6 +38,14 @@ fun Application.userManagementRoutes(profiles: MongoCollection<MongoProfile>){
                 }
             }
         }
+        route("/post"){
+            post{
+                println("hi")
+                val newPost = call.receive<Posts>()
+                newPost.timePosted = BsonTimestamp(System.currentTimeMillis())
+                posts.insertOne(newPost)
+                call.respond(HttpStatusCode.OK)
+            }
+        }
     }
 }
-

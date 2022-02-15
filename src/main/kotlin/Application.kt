@@ -2,6 +2,7 @@ package com.athlink
 
 import com.athlink.api.userManagementRoutes
 import com.athlink.model.MongoProfile
+import com.athlink.model.Posts
 import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.features.*
@@ -18,7 +19,8 @@ import org.litote.kmongo.*
 fun main() {
     val client = KMongo.createClient(System.getenv("MONGO_URI"))
     val database = client.getDatabase("athlink")
-    val profiles = database.getCollection<MongoProfile>()
+    val profiles = database.getCollection<MongoProfile>("profile")
+    val posts = database.getCollection<Posts>("post")
 
     embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
         install(CORS) {
@@ -41,7 +43,7 @@ fun main() {
                     call.respond("Athlink says hello!")
                 }
             }
-            userManagementRoutes(profiles)
+            userManagementRoutes(profiles, posts)
         }
     }.start(wait = true)
 }
