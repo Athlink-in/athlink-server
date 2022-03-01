@@ -12,9 +12,13 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.utils.io.*
 import org.bson.BsonTimestamp
+import com.mongodb.client.model.Sorts.descending
+import org.litote.kmongo.findOne
+import kotlin.math.min
 
 
 fun Application.userManagementRoutes(profiles: MongoCollection<MongoProfile>, posts: MongoCollection<Posts>){
+    var slice = 0;
     routing {
         route("/user") {
             get("/{email}") {
@@ -39,12 +43,23 @@ fun Application.userManagementRoutes(profiles: MongoCollection<MongoProfile>, po
             }
         }
         route("/post"){
+            get{
+                val totalDocuments = posts.countDocuments()
+                println("HIHIHHIHIHIHIHI")
+                println(posts.countDocuments())
+                var limit = call.parameters["limit"]?.toInt() ?: 10;
+                limit = min(limit, totalDocuments.toInt())
+                slice = call.parameters["slice"]?.toInt() ?: slice;
+//                val result = posts.find().sort(descending("timePosted")).limit(limit).toList();
+                val result = posts.find().sort(descending("timePosted")).toList().subList(slice, slice + limit)
+                slice += limit;
+                call.respond(result.map{ it.toJSPost() })
+            }
             post{
-                println("hi")
                 val newPost = call.receive<Posts>()
                 newPost.timePosted = BsonTimestamp(System.currentTimeMillis())
                 posts.insertOne(newPost)
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK,"hi there")
             }
         }
     }
