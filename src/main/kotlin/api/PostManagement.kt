@@ -2,6 +2,7 @@ package com.athlink.api
 
 import com.athlink.model.JSPost
 import com.athlink.model.MongoPost
+import com.athlink.model.MongoProfile
 import com.athlink.util.AthlinkDatabase
 import io.ktor.application.*
 import io.ktor.http.*
@@ -19,11 +20,10 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
         route("/post"){
             get{
                 val totalDocuments = db.posts.countDocuments()
-                println(db.posts.countDocuments())
                 var limit = call.parameters["limit"]?.toInt() ?: 10;
                 limit = min(limit, totalDocuments.toInt())
                 val start = call.parameters["last_time"]?.toInt() ?: getTimeMillis();
-                val tag = call.parameters["tags"]
+                val tag = call.parameters["tag"]
                 val posts = if (tag == null || tag.isBlank()) {
                     db.posts.find(MongoPost::timePosted.lt(BsonTimestamp(start.toInt(), 1)))
                         .take(limit)
@@ -35,18 +35,11 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                         .map{ it.toJSPost() }
                         .toList()
                 }
-                for (p in posts) {
-                    val user = db.profiles.findOne(MongoPost::userEmail.eq(p.userEmail))
-                    p.photoUrl = user?.photoURL
-                    p.userName = user?.email
-                    println(p)
+                posts.forEach {
+                    val user = db.profiles.findOne(MongoProfile::email.eq(it.userEmail))
+                    it.photoUrl = user?.photoURL
+                    it.userName = user?.email
                 }
-//                posts.forEach {
-//                    val user = db.profiles.findOne(MongoPost::userEmail.eq(it.userEmail))
-//                    it.photoUrl = user?.photoURL
-//                    it.userName = user?.email
-//                    println(it)
-//                }
                 call.respond(posts)
             }
             post{
