@@ -7,7 +7,7 @@ from youtubesearchpython import VideosSearch
 def generateData():
     emails = ["phanirajaenugula@gmail.com", "brandonburana2@gmail.com", "karvirishaan@gmail.com",
     "vaenugula@gmail.com"]
-    tags = ["soccer"]
+    tags = ["basketball", "soccer", "football", "hockey", "tennis", "chess", "golf"]
 
     for i in range(2):
 
