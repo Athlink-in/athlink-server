@@ -37,7 +37,7 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 posts.forEach {
                     val user = db.profiles.findOne(MongoProfile::email.eq(it.userEmail))
                     it.photoUrl = user?.photoURL
-                    it.userName = user?.email
+                    it.userName = user?.firstname + " " + user?.lastname
                 }
                 call.respond(posts)
             }
