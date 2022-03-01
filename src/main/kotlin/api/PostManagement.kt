@@ -13,7 +13,6 @@ import org.bson.BsonTimestamp
 import io.ktor.util.date.*
 import org.bson.conversions.Bson
 import org.litote.kmongo.*
-import kotlin.math.min
 
 
 fun Application.postManagementRoutes(db: AthlinkDatabase){
@@ -21,12 +20,12 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
         route ("/post") {
             get {
                 var limit = call.parameters["limit"]?.toInt() ?: 10;
-                val start = call.parameters["last_time"]?.toInt() ?: getTimeMillis();
+                val start = call.parameters["last_time"]?.toLong() ?: getTimeMillis();
                 val tag = call.parameters["tag"]
                 val user = call.parameters["user"]
                 val filterList = emptyList<Bson>().toMutableList()
 
-                filterList += MongoPost::timePosted.lt(BsonTimestamp(start.toInt(), 1))
+                filterList += MongoPost::timePosted.lt(BsonTimestamp(start))
 
                 tag?.let { filterList += MongoPost::tags.contains(it) }
                 user?.let { filterList += MongoPost::userEmail.eq(it) }
@@ -44,7 +43,7 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
             }
             post {
                 val newPost = call.receive<JSPost>().toMongoPost()
-                newPost.timePosted = BsonTimestamp(System.currentTimeMillis().toInt(), 1)
+                newPost.timePosted = BsonTimestamp(System.currentTimeMillis())
                 db.posts.insertOne(newPost)
                 call.respond(HttpStatusCode.OK)
             }
