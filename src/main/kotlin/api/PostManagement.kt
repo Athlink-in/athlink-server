@@ -21,10 +21,15 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
     routing {
         route ("/post") {
             get {
-                var postId = call.parameters["postId"]?.toString()
+                var postId = call.parameters["postId"]
                 if(postId != null) {
-                    val post = db.posts.findOne(MongoPost::_id eq ObjectId(postId).toId())
+                    val post = db.posts.findOne(MongoPost::_id eq ObjectId(postId).toId())!!.toJSPost().also {
+                        val user = db.profiles.findOne(MongoProfile::email.eq(it.userEmail))
+                        it.photoUrl = user?.photoURL
+                        it.userName = user?.firstname + " " + user?.lastname
+                    }
                     call.respond(listOf(post))
+                    return@get
                 }
                 var limit = call.parameters["limit"]?.toInt() ?: 10;
                 val start = call.parameters["last_time"]?.toLong() ?: getTimeMillis();
@@ -72,7 +77,6 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
             }
             post("/like") {
                 val params = call.request.queryParameters
-                println(params)
                 val postId = ObjectId(params["postId"].toString())
                 val email = params["email"].toString()
 
