@@ -12,7 +12,9 @@ import io.ktor.routing.*
 import org.bson.BsonTimestamp
 import io.ktor.util.date.*
 import org.bson.conversions.Bson
+import org.bson.types.ObjectId
 import org.litote.kmongo.*
+import org.litote.kmongo.id.toId
 
 
 fun Application.postManagementRoutes(db: AthlinkDatabase){
@@ -44,8 +46,10 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
             post {
                 val newPost = call.receive<JSPost>().toMongoPost()
                 newPost.timePosted = BsonTimestamp(System.currentTimeMillis())
+                newPost.likes = emptyList()
+                newPost.likeCount = 0
                 db.posts.insertOne(newPost)
-                call.respond(HttpStatusCode.OK)
+                call.respond(newPost._id.toString())
             }
             get ("/trending") {
                 val postTags = db.posts.find()
@@ -54,12 +58,29 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                     .flatMap { it }
                     .groupBy { it }
                 val frequencies = postTags
-                    .mapValues { it -> it.value.size }
+                    .mapValues { it.value.size }
                     .toList()
                     .sortedBy { (_, value) -> -value }
                     .map { it.first }
                     .take(10)
                 call.respond(frequencies)
+            }
+            post("/like") {
+                val params = call.request.queryParameters
+                println(params)
+                val postId = ObjectId(params["postId"].toString())
+                val email = params["email"].toString()
+
+                val post = db.posts.findOne(MongoPost::_id eq postId.toId())
+                if(post!!.likes!!.contains(email)) {
+                    post.likes = post.likes!!.filter { it != email }
+                    post.likeCount = (post.likeCount ?: 0) - 1
+                } else {
+                    post.likes = post.likes!! + email
+                    post.likeCount = (post.likeCount ?: 0) + 1
+                }
+                db.posts.updateOne(post)
+                call.respond(post.likeCount.toString())
             }
         }
     }

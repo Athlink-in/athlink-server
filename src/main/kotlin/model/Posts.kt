@@ -4,20 +4,26 @@ import com.athlink.util.BSONTimestampSerializer
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
 import org.bson.BsonTimestamp
+import org.bson.types.ObjectId
+import org.litote.kmongo.Id
+import org.litote.kmongo.id.toId
+import org.litote.kmongo.newId
 
 @Serializable
 data class JSPost(
     var postContent: String?,
     var timePosted: String?,
-    val likes: Int?,
+    var likeCount: Int?,
     var linkUrl: String?,
     var tags: List<String>?,
     var userEmail: String?,
+    var likes: List<String>?,
+    val postId: String? = "test",
     var photoUrl: String? = null,
-    var userName: String? = null
+    var userName: String? = null,
 ) {
     fun toMongoPost() = MongoPost(
-        postContent, BsonTimestamp(timePosted?.toLong() ?: getTimeMillis()), likes, linkUrl, tags, userEmail
+        postContent, BsonTimestamp(timePosted?.toLong() ?: getTimeMillis()), likeCount, linkUrl, tags, userEmail, likes
     )
 }
 
@@ -26,13 +32,15 @@ data class JSPost(
 data class MongoPost(
     var postContent: String?,
     @Serializable(with = BSONTimestampSerializer::class) var timePosted: BsonTimestamp? = BsonTimestamp(getTimeMillis()),
-    val likes: Int? = 0,
+    var likeCount: Int? = 0,
     var linkUrl: String?,
     var tags: List<String>?,
     var userEmail: String?,
+    var likes: List<String>?,
+    val _id: Id<MongoPost> = newId()
     ) {
     fun toJSPost() = JSPost(
-        postContent, timePosted?.value.toString(), likes, linkUrl, tags, userEmail
+        postContent, timePosted?.value.toString(), likeCount, linkUrl, tags, userEmail, likes, _id.toString()
     )
 }
 
