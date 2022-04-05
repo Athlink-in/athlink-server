@@ -24,7 +24,7 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 var postId = call.parameters["postId"]?.toString()
                 if(postId != null) {
                     val post = db.posts.findOne(MongoPost::_id eq ObjectId(postId).toId())
-                    call.respond(listOf(post?.likeCount.toString()))
+                    call.respond(listOf(post))
                 }
                 var limit = call.parameters["limit"]?.toInt() ?: 10;
                 val start = call.parameters["last_time"]?.toLong() ?: getTimeMillis();
