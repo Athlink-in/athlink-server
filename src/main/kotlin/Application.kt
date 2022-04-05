@@ -2,6 +2,7 @@ package com.athlink
 
 import com.athlink.api.postManagementRoutes
 import com.athlink.api.userManagementRoutes
+import com.athlink.model.MongoComment
 import com.athlink.model.MongoPost
 import com.athlink.model.MongoProfile
 import com.athlink.util.AthlinkDatabase
@@ -23,7 +24,8 @@ fun main() {
 
     val db = AthlinkDatabase(
         profiles = database.getCollection<MongoProfile>("profile"),
-        posts = database.getCollection<MongoPost>("post")
+        posts = database.getCollection<MongoPost>("post"),
+        comments = database.getCollection<MongoComment>("comment")
     )
 
     embeddedServer(Netty, port = System.getenv("PORT").toInt()) {

@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 import org.bson.BsonTimestamp
 import org.bson.types.ObjectId
 import org.litote.kmongo.Id
+import org.litote.kmongo.MongoOperator
 import org.litote.kmongo.id.toId
 import org.litote.kmongo.newId
 
@@ -24,6 +25,7 @@ data class JSPost(
 ) {
     fun toMongoPost() = MongoPost(
         postContent, BsonTimestamp(timePosted?.toLong() ?: getTimeMillis()), likeCount, linkUrl, tags, userEmail, likes
+//        postContent, BsonTimestamp(timePosted?.toLong() ?: getTimeMillis()), likeCount, linkUrl, tags, userEmail, likes
     )
 }
 
@@ -41,6 +43,7 @@ data class MongoPost(
     ) {
     fun toJSPost() = JSPost(
         postContent, timePosted?.value.toString(), likeCount, linkUrl, tags, userEmail, likes, _id.toString()
+//        postContent, timePosted?.value.toString(), likeCount, linkUrl, tags, userEmail, likes, _id.toString()
     )
 }
 

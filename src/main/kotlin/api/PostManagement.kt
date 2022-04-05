@@ -3,6 +3,8 @@ package com.athlink.api
 import com.athlink.model.JSPost
 import com.athlink.model.MongoPost
 import com.athlink.model.MongoProfile
+import com.athlink.model.MongoComment
+import com.athlink.model.JSComment
 import com.athlink.util.AthlinkDatabase
 import io.ktor.application.*
 import io.ktor.http.*
@@ -77,7 +79,7 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
             }
             post("/like") {
                 val params = call.request.queryParameters
-                val postId = ObjectId(params["postId"].toString())
+                val postId = ObjectId(params["postId"])
                 val email = params["email"].toString()
 
                 val post = db.posts.findOne(MongoPost::_id eq postId.toId())
@@ -90,6 +92,22 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 }
                 db.posts.updateOne(post)
                 call.respond(post.likeCount.toString())
+            }
+            get("/comment"){
+                var postId = call.parameters["postId"]
+                val comments = db.comments.find(MongoComment::postId eq postId.toString()).map{ it.toJSComment().also {
+                    val user = db.profiles.findOne(MongoProfile::email.eq(it.userEmail))
+                    it.photoUrl = user?.photoURL
+                    it.userName = user?.firstname + " " + user?.lastname
+                } }
+                call.respond(comments.toList())
+            }
+            post("/comment"){
+                val params = call.request.queryParameters
+                val newComment = call.receive<JSComment>().toMongoComment()
+                newComment.timePosted = BsonTimestamp(System.currentTimeMillis())
+                db.comments.insertOne(newComment)
+                call.respond(HttpStatusCode.OK)
             }
         }
     }
