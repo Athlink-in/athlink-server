@@ -10,7 +10,7 @@ import org.bson.BsonTimestamp
 data class JSConnection(
       var fromEmail: String?,
       var toEmail: String?,
-      var status: String?,
+      var status: String? = "pending",
       var timeStamp: String?
 ) {
     fun toMongoConnection() = MongoConnection(

@@ -19,6 +19,8 @@ data class JSProfile(
     var description: String?,
     var photoURL: String?,
     var memberSince: String?,
+    var connection: Int?,
+    var numConnections: Long?
 ) {
     fun toMongoProfile() = MongoProfile(
         firstname, lastname, height, age, school, weight, gradYear, sex, email, description, photoURL, BsonTimestamp(memberSince?.toLong() ?: getTimeMillis())
@@ -42,6 +44,6 @@ data class MongoProfile(
     @Serializable(with = BSONTimestampSerializer::class) var memberSince: BsonTimestamp? = BsonTimestamp(getTimeMillis()),
 ) {
     fun toJSProfile() = JSProfile(
-        firstname, lastname, height, age, school, weight, gradYear, sex, email, description, photoURL, memberSince?.value.toString()
+        firstname, lastname, height, age, school, weight, gradYear, sex, email, description, photoURL, memberSince?.value.toString(), 0, 0
     )
 }
