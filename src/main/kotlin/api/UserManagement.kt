@@ -1,5 +1,6 @@
 package com.athlink.api
 
+import com.athlink.model.JSConnection
 import com.athlink.model.JSProfile
 import com.athlink.util.AthlinkDatabase
 import com.mongodb.client.model.Filters
@@ -34,6 +35,12 @@ fun Application.userManagementRoutes(db: AthlinkDatabase){
                     db.profiles.replaceOne(Filters.eq("email", newProfile.email), newProfile)
                     call.respond(HttpStatusCode.OK, newProfile.email.toString())
                 }
+            }
+            post("/add"){
+                val newConnection = call.receive<JSConnection>().toMongoConnection()
+                newConnection.timeStamp = BsonTimestamp(System.currentTimeMillis())
+                db.connections.insertOne(newConnection)
+                call.respond(HttpStatusCode.OK)
             }
         }
     }
