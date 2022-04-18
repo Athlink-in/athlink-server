@@ -28,7 +28,9 @@ def generateData():
                 "photoUrl": "/static/media/brandon.5c762569341bd800f8da.png",
                 "tags": curr_tags,
                 "timePosted":None,
-                "likes":0
+                "likeCount":0,
+                "likes":[],
+                "postId": "test"
             }
             print(requests.post("https://athlink-server.herokuapp.com/post", json=data).status_code)
 
