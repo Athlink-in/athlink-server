@@ -6,9 +6,11 @@ import com.athlink.util.AthlinkDatabase
 import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.http.*
+import io.ktor.http.cio.websocket.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.websocket.*
 import org.bson.BsonTimestamp
 import org.litote.kmongo.MongoOperator
 import org.litote.kmongo.and
@@ -17,7 +19,6 @@ import org.litote.kmongo.or
 
 
 fun Application.userManagementRoutes(db: AthlinkDatabase){
-    var slice = 0;
     routing {
         route("/user") {
             get("/{email}") {
@@ -26,6 +27,7 @@ fun Application.userManagementRoutes(db: AthlinkDatabase){
                 val filter = Filters.eq("email", email)
                 val connection = db.connections.findOne { and(or(Filters.eq("toEmail", userEmail), Filters.eq("fromEmail", userEmail))
                     ,or(Filters.eq("toEmail", email), Filters.eq("fromEmail", email))) }
+
                 val numConnections = db.connections.countDocuments(or(Filters.eq("toEmail", email), Filters.eq("fromEmail", email)))
                 call.respond(db.profiles.find(filter).map { it.toJSProfile().also {
                     if(connection == null)

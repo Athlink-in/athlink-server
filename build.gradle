@@ -1,3 +1,4 @@
+
 plugins {
     id 'application'
     id 'org.jetbrains.kotlin.jvm' version '1.5.10'
@@ -27,5 +28,6 @@ dependencies {
     implementation "io.ktor:ktor-serialization:1.6.7"
     implementation "org.litote.kmongo:kmongo:4.0.1"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
+    implementation "io.ktor:ktor-websockets:1.6.8"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

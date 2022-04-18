@@ -2,6 +2,7 @@ package com.athlink
 
 import com.athlink.api.postManagementRoutes
 import com.athlink.api.userManagementRoutes
+import com.athlink.api.ChatManagementRoutes
 import com.athlink.model.MongoComment
 import com.athlink.model.MongoConnection
 import com.athlink.model.MongoPost
@@ -16,6 +17,7 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.websocket.*
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.*
 
@@ -31,6 +33,7 @@ fun main() {
     )
 
     embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
+        install(WebSockets)
         install(CORS) {
             method(HttpMethod.Options)
             method(HttpMethod.Put)
@@ -44,7 +47,9 @@ fun main() {
             install(ContentNegotiation){
                 json()
             }
+
         }
+
         routing {
             route("/") {
                 get {
@@ -53,6 +58,7 @@ fun main() {
             }
             userManagementRoutes(db)
             postManagementRoutes(db)
+            ChatManagementRoutes(db)
         }
     }.start(wait = true)
 }
