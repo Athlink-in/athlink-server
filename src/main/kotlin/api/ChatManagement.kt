@@ -44,6 +44,7 @@ fun Application.ChatManagementRoutes(db: AthlinkDatabase){
                 val receivedText = frame.readText()
                 print(receivedText)
                 val message = Json.decodeFromString<Message>(receivedText)
+                connections.find { it.name == message.toEmail }?.session?.send(message.content)
                 println(message)
             }
         }
