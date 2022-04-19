@@ -2,11 +2,8 @@ package com.athlink
 
 import com.athlink.api.postManagementRoutes
 import com.athlink.api.userManagementRoutes
-import com.athlink.api.ChatManagementRoutes
-import com.athlink.model.MongoComment
-import com.athlink.model.MongoConnection
-import com.athlink.model.MongoPost
-import com.athlink.model.MongoProfile
+import com.athlink.api.chatManagementRoutes
+import com.athlink.model.*
 import com.athlink.util.AthlinkDatabase
 import com.mongodb.client.MongoCollection
 import io.ktor.application.*
@@ -29,7 +26,8 @@ fun main() {
         profiles = database.getCollection<MongoProfile>("profile"),
         posts = database.getCollection<MongoPost>("post"),
         comments = database.getCollection<MongoComment>("comment"),
-        connections = database.getCollection<MongoConnection>("connection")
+        connections = database.getCollection<MongoConnection>("connection"),
+        messages = database.getCollection<MongoMessage>("message")
     )
 
     embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
@@ -58,7 +56,7 @@ fun main() {
             }
             userManagementRoutes(db)
             postManagementRoutes(db)
-            ChatManagementRoutes(db)
+            chatManagementRoutes(db)
         }
     }.start(wait = true)
 }

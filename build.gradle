@@ -29,5 +29,6 @@ dependencies {
     implementation "org.litote.kmongo:kmongo:4.0.1"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
     implementation "io.ktor:ktor-websockets:1.6.8"
+    implementation 'com.google.code.gson:gson:2.9.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
