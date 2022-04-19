@@ -20,22 +20,25 @@ import kotlinx.serialization.json.Json
 fun Application.ChatManagementRoutes(db: AthlinkDatabase){
     routing {
         val connections = Collections.synchronizedSet<SocketConnection?>(LinkedHashSet())
-        webSocket("/testWebsocket/{senderEmail}/{receiverEmail}"){
-            println("Adding user!")
-            val email = call.parameters["senderEmail"].toString()
-            val receiver = call.parameters["receiverEmail"].toString()
-            val thisConnection = SocketConnection(this, email)
-            connections += thisConnection
-            for(frame in incoming) {
-                frame as? Frame.Text ?: continue
-                val receivedText = frame.readText()
-                println()
-                val connection = connections.find { it.name == receiver}
-                println(connection?.name)
-                connection?.session?.send(receivedText)
-            }
-        }
-        webSocket("/testWebsocket2"){
+//        webSocket("/testWebsocket/{senderEmail}/{receiverEmail}"){
+//            println("Adding user!")
+//            val email = call.parameters["senderEmail"].toString()
+//            val receiver = call.parameters["receiverEmail"].toString()
+//            val thisConnection = SocketConnection(this, email)
+//            connections += thisConnection
+//            for(frame in incoming) {
+//                frame as? Frame.Text ?: continue
+//                val receivedText = frame.readText()
+//                println()
+//                val connection = connections.find { it.name == receiver}
+//                println(connection?.name)
+//                connection?.session?.send(receivedText)
+//            }
+//        }
+        webSocket("/testWebsocket2/{email}"){
+            val receiverEmail = call.parameters["email"].toString()
+            println("Setting up server for $receiverEmail")
+            connections += SocketConnection(this, receiverEmail)
             for(frame in incoming) {
                 frame as? Frame.Text ?: continue
                 val receivedText = frame.readText()
