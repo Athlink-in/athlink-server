@@ -53,20 +53,25 @@ fun Application.chatManagementRoutes(db: AthlinkDatabase){
             connections += connection
             println(connections.size)
             try {
-                for (frame in incoming) {
+                for (frame in incoming){
                     frame as? Frame.Text ?: continue
                     val receivedText = frame.readText()
-                    println(receivedText)
-                    val message = Json.decodeFromString<JSMessage>(receivedText)
-                    println(message)
-                    val connection = connections.find{ it.name == message.toEmail }
+                    if(receivedText == "ping"){
+                        connection?.session?.send("pong")
+                    }
+                    else {
+                        println(receivedText)
+                        val message = Json.decodeFromString<JSMessage>(receivedText)
+                        println(message)
+                        val connection = connections.find { it.name == message.toEmail }
 //                    connections.filter { it.name == message.toEmail }.forEach { it.session.send(Gson().toJson(message)) }
 //                    connections.find { it.name == message.toEmail }?.session?.send(Gson().toJson(message))
-                    connection?.session?.send(Gson().toJson(message))
+                        connection?.session?.send(Gson().toJson(message))
 
-                    println("should add to db now")
-                    print(message.toMongoMessage())
-                    db.messages.insertOne(message.toMongoMessage())
+                        println("should add to db now")
+                        print(message.toMongoMessage())
+                        db.messages.insertOne(message.toMongoMessage())
+                    }
                 }
             } catch (e : Exception) {
                 println("onClose ${closeReason.await()}")
