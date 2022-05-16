@@ -6,6 +6,7 @@ import com.athlink.model.MongoProfile
 import com.athlink.model.MongoComment
 import com.athlink.model.JSComment
 import com.athlink.util.AthlinkDatabase
+import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -108,6 +109,11 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 newComment.timePosted = BsonTimestamp(System.currentTimeMillis())
                 db.comments.insertOne(newComment)
                 call.respond(HttpStatusCode.OK)
+            }
+            get("/search/{value}") {
+                val searchValue = call.parameters["value"]
+                val validSearch = db.profiles.find(Filters.all("firstname", searchValue)).toList()
+                call.respond(validSearch)
             }
         }
     }
