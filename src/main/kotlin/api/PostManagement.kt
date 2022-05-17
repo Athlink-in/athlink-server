@@ -111,10 +111,13 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 call.respond(HttpStatusCode.OK)
             }
             get("/search/{value}") {
-                val searchValue = call.parameters["value"]
-                val validSearch = db.profiles.find(Filters.all("firstname", searchValue)).toList()
+                val searchValue = listOf<String>(call.parameters["value"].toString())
+                println(searchValue)
+                val validSearch = db.posts.find(Filters.all("tags", searchValue)).map{ it.toJSPost() }.toList()
+                println(validSearch)
                 call.respond(validSearch)
             }
         }
     }
 }
+
