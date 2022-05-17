@@ -66,7 +66,7 @@ fun Application.userManagementRoutes(db: AthlinkDatabase){
                 }
                 call.respond(connections.toList())
             }
-            get("/search/{value}") {
+            get("/search") {
                 val searchValue = "(" + call.parameters["value"] + ")+"
                 println(searchValue)
                 val validSearch = db.profiles.find(or(Filters.regex("firstname", searchValue), Filters.regex("lastname", searchValue))).toList()
