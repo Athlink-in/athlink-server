@@ -144,8 +144,7 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 var keywords = call.parameters["keywords"]?.split(" ")
 
                 var postIds = keywords?.map {
-                    println(it)
-                    var keyword = db.keyword_indexes.findOne(MongoKeyword::keyword.eq(it))?.toJSKeyword()
+                    var keyword = db.keyword_indexes.findOne(MongoKeyword::keyword.eq(it.lowercase()))?.toJSKeyword()
                     keyword?.indexes?.toList() ?: ArrayList()
                 }
 
@@ -153,9 +152,9 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                     postIds = ArrayList()
                 }
                 var returnVal = postIds.flatten()
-                print(returnVal)
                 var posts = returnVal.map{
                     db.posts.findOne(MongoPost::_id eq ObjectId(it.toString()).toId())?.toJSPost()
+
                 }
                 call.respond(posts)
 
