@@ -8,5 +8,6 @@ data class AthlinkDatabase(
     val posts : MongoCollection<MongoPost>,
     val comments : MongoCollection<MongoComment>,
     val connections: MongoCollection<MongoConnection>,
-    val messages: MongoCollection<MongoMessage>
+    val messages: MongoCollection<MongoMessage>,
+    val keyword_indexes: MongoCollection<MongoKeyword>
 )

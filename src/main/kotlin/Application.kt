@@ -27,7 +27,9 @@ fun main() {
         posts = database.getCollection<MongoPost>("post"),
         comments = database.getCollection<MongoComment>("comment"),
         connections = database.getCollection<MongoConnection>("connection"),
-        messages = database.getCollection<MongoMessage>("message")
+        messages = database.getCollection<MongoMessage>("message"),
+        keyword_indexes = database.getCollection<MongoKeyword>("keyword_index")
+
     )
 
     embeddedServer(Netty, port = System.getenv("PORT").toInt()) {

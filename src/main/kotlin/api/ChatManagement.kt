@@ -65,7 +65,14 @@ fun Application.chatManagementRoutes(db: AthlinkDatabase){
                         println(message)
                         val connection = connections.find { it.name == message.toEmail }
 //                    connections.filter { it.name == message.toEmail }.forEach { it.session.send(Gson().toJson(message)) }
-//                    connections.find { it.name == message.toEmail }?.session?.send(Gson().toJson(message))
+//                    connections.find { it.name == message.toEmail }?.session?.send(Gson().toJson(message)
+                        if(connection != null){
+                            println("Connection found")
+
+                        }
+                        else{
+                            println("connection not found")
+                        }
                         connection?.session?.send(Gson().toJson(message))
 
                         println("should add to db now")
@@ -74,7 +81,7 @@ fun Application.chatManagementRoutes(db: AthlinkDatabase){
                     }
                 }
             } catch (e : Exception) {
-                println("onClose ${closeReason.await()}")
+                println("onClose $e")
                 println("CLOSED")
                 connections -= connection
             }
