@@ -63,7 +63,7 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 println(content?.split(" "))
                 println(newPost)
                 db.posts.insertOne(newPost)
-                content?.split(" ")?.forEach {
+                content?.split(" ")?.distinct()?.forEach {
                     var keyword = db.keyword_indexes.findOne(MongoKeyword::keyword.eq(it))?.toJSKeyword()
 
                     if(keyword != null) {
@@ -79,8 +79,6 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                         keyword = JSKeyword(it, indexes)
                         db.keyword_indexes.insertOne(keyword.toMongoKeyword())
                     }
-
-
                 }
                 call.respond(newPost._id.toString())
             }
@@ -152,7 +150,7 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                     postIds = ArrayList()
                 }
                 var returnVal = postIds.flatten()
-                var posts = returnVal.map{
+                var posts = returnVal.distinct().map{
                     db.posts.findOne(MongoPost::_id eq ObjectId(it.toString()).toId())?.toJSPost()
                 }
                 call.respond(posts)
