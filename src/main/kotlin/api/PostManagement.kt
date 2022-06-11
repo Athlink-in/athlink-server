@@ -154,7 +154,6 @@ fun Application.postManagementRoutes(db: AthlinkDatabase){
                 var returnVal = postIds.flatten()
                 var posts = returnVal.map{
                     db.posts.findOne(MongoPost::_id eq ObjectId(it.toString()).toId())?.toJSPost()
-
                 }
                 call.respond(posts)
 
